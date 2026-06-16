@@ -7,12 +7,11 @@ export const USER_ID_STORAGE_KEY = "fairlens_user_id";
 export const LAST_AUDIT_STORAGE_KEY = "fairlens_last_audit_id";
 export const AUTH_STATE_EVENT = "fairlens:auth-state-changed";
 
-const defaultApiBaseUrl = "https://fairflow-backend.onrender.com";
-const apiBaseUrl = (process.env.REACT_APP_API_BASE_URL || defaultApiBaseUrl).replace(/\/$/, "");
-export const API_BASE_URL = apiBaseUrl;
+const defaultApiBaseUrl = "https://fairflow-ai-1056539416381.asia-south1.run.app";
+export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || defaultApiBaseUrl).replace(/\/$/, "");
 
 const api = axios.create({
-  baseURL: apiBaseUrl
+  baseURL: API_BASE_URL
 });
 
 const isAuthRoute = (pathname) => pathname === "/login" || pathname === "/register";
