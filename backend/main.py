@@ -11,7 +11,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from cors_config import get_allowed_origins
 from database import Base, SessionLocal, engine
-from routers.audit import limiter
 from domain_config import PRESET_DOMAIN_TEMPLATES
 from models import DomainTemplate
 from routers.audit import router as audit_router
