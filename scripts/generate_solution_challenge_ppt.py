@@ -8,7 +8,7 @@ from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches, Pt
 
-TEMPLATE = Path('/Users/akshatagrawal/Downloads/[EXT] Solution Challenge 2026 - Prototype PPT Template.pptx')
+TEMPLATE = Path('/Users/akshatagrawal/Desktop/FairFlow-AI/[EXT] Solution Challenge 2026 - Updated Prototype PPT Template.pptx')
 OUTPUT = Path('/Users/akshatagrawal/Desktop/FairFlow-AI/docs/FairFlow_Solution_Challenge_2026_Submission.pptx')
 
 TITLE_COLOR = RGBColor(31, 41, 55)
@@ -32,7 +32,12 @@ def reset_text(shape, text: str, size: int = 22, bold: bool = False, color: RGBC
 
 
 def add_title(slide, text: str) -> None:
-    title_shape = slide.shapes[0]
+    title_shape = slide.shapes.title
+    if not title_shape:
+        for shape in slide.shapes:
+            if getattr(shape, "has_text_frame", False):
+                title_shape = shape
+                break
     reset_text(title_shape, text, size=30, bold=True)
 
 
@@ -102,14 +107,20 @@ def add_process_step(slide, left: float, top: float, width: float, height: float
     r2.font.color.rgb = WHITE
 
 
+def get_text_shapes(slide):
+    return [s for s in slide.shapes if getattr(s, "has_text_frame", False)]
+
 def main() -> None:
     prs = Presentation(str(TEMPLATE))
 
     # Slide 1: Cover
     s1 = prs.slides[0]
-    reset_text(s1.shapes[0], 'FairFlow AI: Continuous Fairness Pipeline', size=34, bold=True)
-    reset_text(s1.shapes[1], '', size=1)
-    reset_text(s1.shapes[3], '', size=1)
+    ts1 = get_text_shapes(s1)
+    if len(ts1) > 0:
+        reset_text(ts1[0], 'FairFlow AI: Continuous Fairness Pipeline', size=34, bold=True)
+    for s in ts1[1:]:
+        reset_text(s, '', size=1)
+
     add_multiline_box(
         s1, 0.35, 1.85, 9.2, 2.1,
         [
@@ -128,7 +139,10 @@ def main() -> None:
 
     # Slide 2: Team details
     s2 = prs.slides[1]
-    reset_text(s2.shapes[2], '', size=1)
+    ts2 = get_text_shapes(s2)
+    for s in ts2:
+        reset_text(s, '', size=1)
+    
     add_multiline_box(
         s2, 0.45, 2.75, 9.0, 1.95,
         [
@@ -394,8 +408,10 @@ def main() -> None:
 
     # Slide 13: Links
     s13 = prs.slides[12]
-    tf13 = s13.shapes[0].text_frame
-    tf13.clear()
+    ts13 = get_text_shapes(s13)
+    tf13 = ts13[0].text_frame if ts13 else None
+    if tf13:
+        tf13.clear()
     lines = [
         ('Provide links to your:', 28, True, TITLE_COLOR),
         ('', 8, False, BODY_COLOR),

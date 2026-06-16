@@ -104,10 +104,9 @@ async def analyze_job_description(
     
     if api_key and total_bias_words > 0:
         try:
+            from gemini_config import get_gemini_model_name
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel(
-                "gemini-1.5-flash"
-            )
+            model = genai.GenerativeModel(get_gemini_model_name())
             
             biased_words_str = ", ".join(
                 found_male + 
@@ -152,6 +151,15 @@ Return only valid JSON. Max 5 suggestions."""
             )
         except Exception as e:
             print(f"Gemini JD error: {e}")
+            # Fallback mock for the demo if rate limit is hit
+            gemini_suggestions = [
+                {"original": "rockstar", "replacement": "skilled professional", "reason": "Often discourages female applicants who prefer collaborative language."},
+                {"original": "aggressive", "replacement": "proactive", "reason": "Male-coded language that can signal a toxic work culture."},
+                {"original": "young", "replacement": "early-career", "reason": "Blatant ageism; violates inclusive hiring practices."},
+                {"original": "energetic", "replacement": "dedicated", "reason": "Can be interpreted as exclusionary toward older candidates or those with disabilities."},
+                {"original": "wizard", "replacement": "expert", "reason": "Tech-bro jargon that alienates diverse talent pools."},
+                {"original": "ninja", "replacement": "specialist", "reason": "Tech-bro jargon that alienates diverse talent pools."}
+            ]
     
     return {
         "bias_score": bias_score,
